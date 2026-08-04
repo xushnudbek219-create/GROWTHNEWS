@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Community | Rasmiy Portal</title>
+    <title>Growth Community | Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,13 +19,13 @@
             --text-muted: #94a3b8;
         }
 
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; transition: all 0.3s ease; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; transition: all 0.2s ease; }
 
         body {
             background: var(--bg-gradient);
             min-height: 100vh;
             color: var(--text-main);
-            padding: 30px 15px;
+            padding: 20px 10px;
             display: flex;
             justify-content: center;
         }
@@ -34,7 +34,6 @@
 
         .header { text-align: center; margin-bottom: 20px; }
         .header h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(90deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header p { color: var(--text-muted); margin-top: 5px; }
 
         .main-nav {
             display: flex;
@@ -44,67 +43,48 @@
             border-radius: 16px;
             margin-bottom: 25px;
             gap: 6px;
-            flex-wrap: wrap;
         }
 
         .nav-btn {
             flex: 1;
-            padding: 12px 10px;
+            padding: 12px 6px;
             border: none;
             background: transparent;
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            white-space: nowrap;
         }
 
-        .nav-btn.active {
-            background: var(--accent-color);
-            color: white;
-            box-shadow: 0 4px 15px var(--accent-glow);
-        }
+        .nav-btn.active { background: var(--accent-color); color: white; box-shadow: 0 4px 15px var(--accent-glow); }
 
         .card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
-            padding: 25px;
+            padding: 22px;
             border-radius: 20px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        h2 { font-size: 1.3rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: #e2e8f0; }
-
-        .sub-tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
-        .sub-tab-btn {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-muted);
-            padding: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .sub-tab-btn.active { background: rgba(99, 102, 241, 0.3); color: white; border-color: var(--accent-color); }
+        h2 { font-size: 1.25rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: #e2e8f0; }
 
         input, textarea {
             width: 100%;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--glass-border);
-            padding: 14px 18px;
+            padding: 12px 16px;
             border-radius: 12px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         input:focus, textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
@@ -114,49 +94,84 @@
             background: linear-gradient(90deg, #6366f1, #8b5cf6);
             color: white;
             border: none;
-            padding: 14px;
+            padding: 12px;
             border-radius: 12px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
         }
 
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
 
-        .news-card {
+        /* Post kartasi */
+        .post-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--glass-border);
             padding: 18px;
             border-radius: 16px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
-        .news-header { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-muted); font-size: 0.85rem; }
-        .news-author { color: #818cf8; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        .news-author.admin-badge { color: #c084fc; }
-        .news-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid var(--glass-border); }
+        .post-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem; }
+        .post-author { color: #818cf8; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .admin-badge { color: #c084fc; font-weight: 800; }
+        .post-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid var(--glass-border); }
 
+        /* Smaylik Reaksiyalar paneli */
+        .reaction-bar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .emoji-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .emoji-btn:hover { background: rgba(99, 102, 241, 0.3); border-color: var(--accent-color); }
+
+        /* Kommentariyalar bo'limi */
+        .comment-section {
+            margin-top: 15px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .comment-item {
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .comment-item:last-child { border-bottom: none; }
+        .comment-user { color: #38bdf8; font-weight: 600; }
+
+        .comment-input-box { display: flex; gap: 8px; margin-top: 10px; }
+        .comment-input-box input { margin-bottom: 0; padding: 8px 12px; font-size: 0.85rem; }
+        .comment-input-box button { width: auto; padding: 8px 15px; font-size: 0.85rem; }
+
+        /* Reyting Jadvali */
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
-        th { color: var(--text-muted); font-weight: 600; text-align: left; padding: 10px 15px; }
-        td { background: rgba(255, 255, 255, 0.03); padding: 14px 15px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+        th { color: var(--text-muted); font-weight: 600; text-align: left; padding: 10px; font-size: 0.85rem; }
+        td { background: rgba(255, 255, 255, 0.03); padding: 12px 10px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; }
         td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
         td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
 
-        .code-badge { background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-family: monospace; }
-        .user-welcome-box { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent-color); padding: 25px; border-radius: 16px; text-align: center; }
-        
-        .alert-login-box {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid #f59e0b;
-            color: #fbbf24;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .masked-code { color: #64748b; font-family: monospace; letter-spacing: 2px; }
+        .user-welcome-box { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent-color); padding: 20px; border-radius: 16px; text-align: center; }
+        .alert-login-box { background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; color: #fbbf24; padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -164,35 +179,59 @@
 <div class="container">
     <div class="header">
         <h1>GROWTH COMMUNITY</h1>
-        <p>O'quvchilar va O'qituvchilar Interaktiv Portali</p>
+        <p>O'quvchilar va O'qituvchilar Portali</p>
     </div>
 
-    <!-- NAVIGATSIYA MENYUSI -->
+    <!-- NAVIGATSIYA -->
     <div class="main-nav">
         <button class="nav-btn active" id="nav-home" onclick="showPage('home')"><i class="fa-solid fa-house"></i> Bosh sahifa</button>
-        <button class="nav-btn" id="nav-leaderboard" onclick="showPage('leaderboard')"><i class="fa-solid fa-trophy"></i> Leaderboard</button>
         <button class="nav-btn" id="nav-news" onclick="showPage('news')"><i class="fa-solid fa-newspaper"></i> Yangiliklar</button>
+        <button class="nav-btn" id="nav-leaderboard" onclick="showPage('leaderboard')"><i class="fa-solid fa-trophy"></i> Reyting</button>
         <button class="nav-btn" id="nav-profile" onclick="showPage('profile')"><i class="fa-solid fa-user"></i> Profil</button>
     </div>
 
-    <!-- 1. BOSH SAHIFA -->
+    <!-- 1. BOSH SAHIFA (O'QUVCHILAR CHATI / POSTLAR) -->
     <div id="page-home">
+        <!-- Post Yuborish Oynasi -->
         <div class="card">
-            <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Barcha Postlar va Xabarlar</h2>
-            <div id="home-feed">Xabarlar yuklanmoqda...</div>
+            <h2><i class="fa-solid fa-pen-to-square" style="color: #6366f1;"></i> Post Yozish</h2>
+            
+            <div id="login-warning" class="alert-login-box">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Post yoki izoh qoldirish uchun avval <strong>Profil</strong> bo'limida kirishingiz kerak!</span>
+            </div>
+
+            <div id="post-form-box" style="display: none;">
+                <textarea id="user-post-content" rows="3" placeholder="Fikringiz, savolingiz yoki xabaringizni yozing..."></textarea>
+                <input type="text" id="user-post-img-url" placeholder="Rasm havolasi (URL linki, ixtiyoriy)...">
+                <button class="btn" onclick="userSendPost()"><i class="fa-solid fa-paper-plane"></i> Chop Etish</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-comments" style="color: #38bdf8;"></i> Hamjamiyat Xabarlari</h2>
+            <div id="home-feed">Yuklanmoqda...</div>
         </div>
     </div>
 
-    <!-- 2. LEADERBOARD SAHIFASI -->
+    <!-- 2. YANGILIKLAR SAHIFASI (FAQAT ADMIN E'LONLARI) -->
+    <div id="page-news" style="display: none;">
+        <div class="card">
+            <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy Yangiliklar va E'lonlar</h2>
+            <div id="admin-news-feed">E'lonlar yuklanmoqda...</div>
+        </div>
+    </div>
+
+    <!-- 3. REYTING SAHIFASI (KODLASH YASHIRILGAN) -->
     <div id="page-leaderboard" style="display: none;">
         <div class="card">
-            <h2><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> O'quvchilar Reytingi (Leaderboard)</h2>
+            <h2><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> O'quvchilar Reytingi</h2>
             <table>
                 <thead>
                     <tr>
                         <th>O'rin</th>
                         <th>Ism</th>
-                        <th>Maxsus Kod</th>
+                        <th>Kod</th>
                         <th>Ball</th>
                     </tr>
                 </thead>
@@ -201,68 +240,26 @@
         </div>
     </div>
 
-    <!-- 3. YANGILIKLAR SAHIFASI (XABAR YUBORISH BOBI BILAN) -->
-    <div id="page-news" style="display: none;">
-        
-        <!-- Post Yuborish Formasi -->
-        <div class="card">
-            <h2><i class="fa-solid fa-paper-plane" style="color: #38bdf8;"></i> Yangi Xabar Yuborish</h2>
-            
-            <div id="login-warning" class="alert-login-box">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                <span>Xabar yuborish uchun avval <strong>Profil</strong> bo'limida tizimga kiring!</span>
-            </div>
-
-            <div id="post-form-box" style="display: none;">
-                <textarea id="user-post-content" rows="3" placeholder="Fikringiz yoki xabaringizni yozing..."></textarea>
-                <input type="text" id="user-post-img-url" placeholder="Rasm havolasi (URL linki, ixtiyoriy)...">
-                <button class="btn" onclick="userSendPost()"><i class="fa-solid fa-share"></i> Xabarni Ulashish</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Yangiliklar va Postlar</h2>
-            <div id="news-feed">E'lonlar yuklanmoqda...</div>
-        </div>
-    </div>
-
     <!-- 4. PROFIL SAHIFASI -->
     <div id="page-profile" style="display: none;">
-        
         <div class="card" id="auth-card">
-            <div class="sub-tab-buttons">
-                <button class="sub-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">Tizimga Kirish</button>
-                <button class="sub-tab-btn" id="tab-reg-btn" onclick="switchAuthTab('register')">Yangi Ro'yxatdan O'tish</button>
-            </div>
-
-            <!-- Kirish -->
-            <div id="login-form">
-                <h2><i class="fa-solid fa-right-to-bracket" style="color: #6366f1;"></i> Profilga Kirish</h2>
-                <input type="text" id="login-name" placeholder="Ism va Familiyangizni kiriting...">
-                <input type="password" id="login-code" placeholder="5 xonali kodingizni kiriting...">
-                <button class="btn" onclick="loginUser()"><i class="fa-solid fa-key"></i> Kirish</button>
-            </div>
-
-            <!-- Ro'yxatdan o'tish -->
-            <div id="reg-form" style="display: none;">
-                <h2><i class="fa-solid fa-user-plus" style="color: #10b981;"></i> Yangi O'quvchi Ro'yxatdan O'tishi</h2>
-                <input type="text" id="reg-name" placeholder="Ism va Familiyangizni kiriting...">
-                <button class="btn" style="background: linear-gradient(90deg, #10b981, #059669);" onclick="registerUser()"><i class="fa-solid fa-user-check"></i> Kod Olish va Ro'yxatdan O'tish</button>
-            </div>
+            <h2 id="auth-title"><i class="fa-solid fa-right-to-bracket" style="color: #6366f1;"></i> Kirish / Ro'yxatdan O'tish</h2>
+            <input type="text" id="user-name" placeholder="Ism va Familiyangizni kiriting...">
+            <input type="password" id="user-code" placeholder="Maxsus 5 xonali kodingiz (kirish uchun)...">
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">* Birinchi marta kirayotgan bo'lsangiz, kod kiritmang! Avtomat hosil bo'ladi.</p>
+            <button class="btn" onclick="handleAuth()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Davom Etish</button>
         </div>
 
-        <!-- Profil Ma'lumotlari -->
         <div class="card" id="profile-card" style="display: none;">
             <div class="user-welcome-box">
-                <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Xush kelibsiz, <span id="profile-name" style="color: #818cf8;"></span>! 👋</h3>
-                <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 15px;">
-                    Sizning maxsus kodingiz: <strong class="code-badge" id="profile-code"></strong><br><br>
-                    Joriy ballingiz: <strong style="color:#10b981; font-size: 1.3rem;" id="profile-points">0</strong> ball
+                <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Xush kelibsiz, <span id="profile-name" style="color: #818cf8;"></span>!</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 15px;">
+                    Sizning maxsus kodingiz: <strong style="color: #fbbf24; font-family: monospace;" id="profile-code"></strong><br><br>
+                    Joriy ballingiz: <strong style="color:#10b981; font-size: 1.2rem;" id="profile-points">0</strong> ball
                 </p>
-                <button style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Chiqish</button>
+                <button style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="logoutUser()">Chiqish</button>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -273,90 +270,67 @@
     const { createClient } = window.supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let currentUser = null;
+    let currentUser = JSON.parse(localStorage.getItem('growth_user')) || null;
+
+    const EMOJIS = ['❤️', '🔥', '👍', '👏', '😂', '😮', '💪', '💻'];
 
     function showPage(page) {
         document.getElementById('page-home').style.display = page === 'home' ? 'block' : 'none';
-        document.getElementById('page-leaderboard').style.display = page === 'leaderboard' ? 'block' : 'none';
         document.getElementById('page-news').style.display = page === 'news' ? 'block' : 'none';
+        document.getElementById('page-leaderboard').style.display = page === 'leaderboard' ? 'block' : 'none';
         document.getElementById('page-profile').style.display = page === 'profile' ? 'block' : 'none';
 
         document.getElementById('nav-home').classList.toggle('active', page === 'home');
-        document.getElementById('nav-leaderboard').classList.toggle('active', page === 'leaderboard');
         document.getElementById('nav-news').classList.toggle('active', page === 'news');
+        document.getElementById('nav-leaderboard').classList.toggle('active', page === 'leaderboard');
         document.getElementById('nav-profile').classList.toggle('active', page === 'profile');
-    }
-
-    function switchAuthTab(tab) {
-        document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-        document.getElementById('reg-form').style.display = tab === 'register' ? 'block' : 'none';
-        document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login');
-        document.getElementById('tab-reg-btn').classList.toggle('active', tab === 'register');
     }
 
     function checkUserStatus() {
         if (currentUser) {
             document.getElementById('login-warning').style.display = 'none';
             document.getElementById('post-form-box').style.display = 'block';
+            showProfile(currentUser.name, currentUser.code, currentUser.points);
         } else {
-            document.getElementById('login-warning').style.display = 'flex';
+            document.getElementById('login-warning').style.display = 'block';
             document.getElementById('post-form-box').style.display = 'none';
         }
     }
 
-    async function loginUser() {
-        const name = document.getElementById('login-name').value.trim();
-        const code = document.getElementById('login-code').value.trim();
+    async function handleAuth() {
+        const name = document.getElementById('user-name').value.trim();
+        const code = document.getElementById('user-code').value.trim();
 
-        if (!name || !code) return alert("Iltimos, ism va kodingizni kiriting!");
+        if (!name) return alert("Ismingizni kiriting!");
 
-        const { data, error } = await db.from('students').select('*').eq('code', code);
-
-        if (error) {
-            alert("Xatolik: " + error.message);
-            return;
-        }
-
-        if (data && data.length > 0) {
-            const user = data[0];
-            if (user.name.toLowerCase() === name.toLowerCase()) {
-                currentUser = user;
-                showProfile(user.name, user.code, user.points);
-                checkUserStatus();
+        // Agar kod kiritilgan bo'lsa - Kirish
+        if (code) {
+            const { data } = await db.from('students').select('*').eq('code', code);
+            if (data && data.length > 0 && data[0].name.toLowerCase() === name.toLowerCase()) {
+                currentUser = data[0];
+                saveUserSession();
             } else {
-                alert("Xatolik: Ushbu kod boshqa ismga tegishli!");
+                alert("Kod yoki ism noto'g'ri!");
             }
-        } else {
-            alert("Xatolik: Noto'g'ri kod yoki ism!");
+        } 
+        // Kod yo'q bo'lsa - Ro'yxatdan o'tish
+        else {
+            const newCode = Math.floor(10000 + Math.random() * 90000).toString();
+            const { data, error } = await db.from('students').insert([{ name, code: newCode, points: 0 }]).select();
+            if (error) {
+                alert("Xatolik: " + error.message);
+            } else {
+                alert(`Siz ro'yxatdan o'tdingiz!\nSizning maxsus kodingiz: ${newCode}\nUni eslab qoling!`);
+                currentUser = data[0];
+                saveUserSession();
+            }
         }
     }
 
-    async function registerUser() {
-        const nameInput = document.getElementById('reg-name').value.trim();
-        if (!nameInput) return alert("Iltimos, ismingizni kiriting!");
-
-        const { data: existing } = await db.from('students').select('*').ilike('name', nameInput);
-
-        if (existing && existing.length > 0) {
-            alert("Bu ism ro'yxatdan o'tgan! 'Tizimga kirish' bo'limi orqali kodingizni kiriting.");
-            switchAuthTab('login');
-            document.getElementById('login-name').value = nameInput;
-            return;
-        }
-
-        const randomCode = Math.floor(10000 + Math.random() * 90000).toString();
-
-        const { error } = await db.from('students').insert([{ name: nameInput, code: randomCode, points: 0 }]);
-
-        if (error) {
-            alert("Xatolik: " + error.message);
-        } else {
-            alert(`Muvaffaqiyatli ro'yxatdan o'tdingiz!\nKodingiz: ${randomCode}\nUni eslab qoling!`);
-            currentUser = { name: nameInput, code: randomCode, points: 0 };
-            showProfile(nameInput, randomCode, 0);
-            checkUserStatus();
-            loadLeaderboard();
-        }
+    function saveUserSession() {
+        localStorage.setItem('growth_user', JSON.stringify(currentUser));
+        checkUserStatus();
+        loadLeaderboard();
     }
 
     function showProfile(name, code, points) {
@@ -368,21 +342,20 @@
     }
 
     function logoutUser() {
+        localStorage.removeItem('growth_user');
         currentUser = null;
         document.getElementById('profile-card').style.display = 'none';
         document.getElementById('auth-card').style.display = 'block';
-        document.getElementById('login-name').value = '';
-        document.getElementById('login-code').value = '';
         checkUserStatus();
     }
 
+    // Foydalanuvchi Post Jo'natishi
     async function userSendPost() {
-        if (!currentUser) return alert("Xabar yuborish uchun tizimga kiring!");
-
+        if (!currentUser) return alert("Tizimga kiring!");
         const content = document.getElementById('user-post-content').value.trim();
         const imageUrl = document.getElementById('user-post-img-url').value.trim();
 
-        if (!content) return alert("Iltimos, xabar matnini kiriting!");
+        if (!content) return alert("Matn kiriting!");
 
         const { error } = await db.from('news').insert([{
             author_name: currentUser.name,
@@ -391,19 +364,110 @@
             is_admin: false
         }]);
 
-        if (error) {
-            alert("Xatolik: " + error.message);
-        } else {
-            alert("Xabaringiz muvaffaqiyatli yuborildi!");
+        if (!error) {
             document.getElementById('user-post-content').value = '';
             document.getElementById('user-post-img-url').value = '';
-            loadNews();
+            loadHomePosts();
         }
     }
 
+    // Bosh Sahifa Postlarini Yuklash (Komment va Reaksiyalar bilan)
+    async function loadHomePosts() {
+        const { data: posts } = await db.from('news').select('*').eq('is_admin', false).order('id', { ascending: false });
+        const { data: comments } = await db.from('comments').select('*');
+        const { data: reactions } = await db.from('reactions').select('*');
+
+        if (posts) {
+            let html = '';
+            posts.forEach(p => {
+                // Reaksiyalarni hisoblash
+                const postReactions = reactions ? reactions.filter(r => r.post_id === p.id) : [];
+                let emojiHtml = '';
+                EMOJIS.forEach(e => {
+                    const count = postReactions.filter(r => r.emoji === e).length;
+                    emojiHtml += `<button class="emoji-btn" onclick="addReaction(${p.id}, '${e}')">${e} <span>${count || ''}</span></button>`;
+                });
+
+                // Kommentariyalarni olish
+                const postComments = comments ? comments.filter(c => c.post_id === p.id) : [];
+                let commentHtml = '';
+                postComments.forEach(c => {
+                    commentHtml += `<div class="comment-item"><span class="comment-user">${c.author_name}:</span> ${c.content}</div>`;
+                });
+
+                html += `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <span class="post-author"><i class="fa-solid fa-user"></i> ${p.author_name}</span>
+                        </div>
+                        <p style="font-size: 1rem; line-height: 1.4;">${p.content}</p>
+                        ${p.image_url ? `<img src="${p.image_url}" class="post-img" onerror="this.style.display='none'">` : ''}
+                        
+                        <!-- Emoji Reaksiyalar -->
+                        <div class="reaction-bar">${emojiHtml}</div>
+
+                        <!-- Kommentariyalar -->
+                        <div class="comment-section">
+                            <div>${commentHtml || '<span style="color:#64748b; font-size:0.8rem;">Hozircha izohlar yo\'q</span>'}</div>
+                            <div class="comment-input-box">
+                                <input type="text" id="comment-input-${p.id}" placeholder="Izoh qoldiring...">
+                                <button class="btn" onclick="addComment(${p.id})">Yuborish</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('home-feed').innerHTML = html || "Hozircha xabarlar yo'q.";
+        }
+    }
+
+    // Admin Yangiliklarini Yuklash (Faqat Yangiliklar Sahifasiga)
+    async function loadAdminNews() {
+        const { data: news } = await db.from('news').select('*').eq('is_admin', true).order('id', { ascending: false });
+        if (news) {
+            let html = '';
+            news.forEach(n => {
+                html += `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <span class="post-author admin-badge"><i class="fa-solid fa-circle-check"></i> ${n.author_name || 'Admin'}</span>
+                        </div>
+                        <p style="font-size: 1.05rem; line-height: 1.4;">${n.content}</p>
+                        ${n.image_url ? `<img src="${n.image_url}" class="post-img" onerror="this.style.display='none'">` : ''}
+                    </div>
+                `;
+            });
+            document.getElementById('admin-news-feed').innerHTML = html || "Hozircha rasmiy e'lonlar yo'q.";
+        }
+    }
+
+    // Reaksiya bildirish
+    async function addReaction(postId, emoji) {
+        if (!currentUser) return alert("Reaksiya bildirish uchun tizimga kiring!");
+        await db.from('reactions').insert([{ post_id: postId, emoji }]);
+        loadHomePosts();
+    }
+
+    // Kommentariya qo'shish
+    async function addComment(postId) {
+        if (!currentUser) return alert("Izoh yozish uchun tizimga kiring!");
+        const input = document.getElementById(`comment-input-${postId}`);
+        const text = input.value.trim();
+        if (!text) return;
+
+        await db.from('comments').insert([{
+            post_id: postId,
+            author_name: currentUser.name,
+            content: text
+        }]);
+
+        input.value = '';
+        loadHomePosts();
+    }
+
+    // Reyting Jadvali (Kod yashirilgan)
     async function loadLeaderboard() {
-        const { data, error } = await db.from('students').select('*').order('points', { ascending: false });
-        if (error) return;
+        const { data } = await db.from('students').select('*').order('points', { ascending: false });
         if (data) {
             let html = '';
             data.forEach((student, index) => {
@@ -412,47 +476,19 @@
                     <tr>
                         <td><strong>${badgeClass}</strong></td>
                         <td>${student.name}</td>
-                        <td><span class="code-badge">${student.code}</span></td>
+                        <td><span class="masked-code">*****</span></td>
                         <td><strong style="color: #10b981;">${student.points}</strong> ball</td>
                     </tr>
                 `;
             });
-            document.getElementById('leaderboard').innerHTML = html || "<tr><td colspan='4'>Hozircha o'quvchilar yo'q.</td></tr>";
-        }
-    }
-
-    async function loadNews() {
-        const { data, error } = await db.from('news').select('*').order('id', { ascending: false });
-        if (error) return;
-
-        if (data && data.length > 0) {
-            let html = '';
-            data.forEach(n => {
-                const isAdmin = n.is_admin;
-                html += `
-                    <div class="news-card">
-                        <div class="news-header">
-                            <span class="news-author ${isAdmin ? 'admin-badge' : ''}">
-                                <i class="fa-solid ${isAdmin ? 'fa-circle-check' : 'fa-user'}"></i> 
-                                ${n.author_name || 'Foydalanuvchi'} ${isAdmin ? '(Admin)' : ''}
-                            </span>
-                        </div>
-                        <p style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc;">${n.content}</p>
-                        ${n.image_url ? `<img src="${n.image_url}" class="news-img" alt="Rasm" onerror="this.style.display='none'">` : ''}
-                    </div>
-                `;
-            });
-            document.getElementById('home-feed').innerHTML = html;
-            document.getElementById('news-feed').innerHTML = html;
-        } else {
-            document.getElementById('home-feed').innerHTML = "Hozircha xabarlar yo'q.";
-            document.getElementById('news-feed').innerHTML = "Hozircha e'lonlar yo'q.";
+            document.getElementById('leaderboard').innerHTML = html || "<tr><td colspan='4'>O'quvchilar yo'q</td></tr>";
         }
     }
 
     checkUserStatus();
+    loadHomePosts();
+    loadAdminNews();
     loadLeaderboard();
-    loadNews();
 </script>
 
 </body>
