@@ -36,7 +36,7 @@
         .header h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(90deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .header p { color: var(--text-muted); margin-top: 5px; }
 
-        /* Tepadagi Asosiy Menyular (Tabs) */
+        /* Tepadagi Navigatsiya Menyusi */
         .main-nav {
             display: flex;
             background: var(--glass-bg);
@@ -134,7 +134,7 @@
 
         .news-header { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-muted); font-size: 0.85rem; }
         .news-author { color: #818cf8; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        .news-img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid var(--glass-border); }
+        .news-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid var(--glass-border); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
         th { color: var(--text-muted); font-weight: 600; text-align: left; padding: 10px 15px; }
@@ -162,11 +162,11 @@
         <button class="nav-btn" id="nav-profile" onclick="showPage('profile')"><i class="fa-solid fa-user"></i> Profil</button>
     </div>
 
-    <!-- 1. BOSH SAHIFA (Faqat Admin postlari va rasmlari) -->
+    <!-- 1. BOSH SAHIFA (Faqat Admin e'lonlari va rasmlari) -->
     <div id="page-home">
         <div class="card">
             <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy Xabarlar va Postlar</h2>
-            <div id="home-feed">Yuklanmoqda...</div>
+            <div id="home-feed">Xabarlar yuklanmoqda...</div>
         </div>
     </div>
 
@@ -271,7 +271,12 @@
 
         if (!name || !code) return alert("Iltimos, ism va kodingizni kiriting!");
 
-        const { data } = await db.from('students').select('*').eq('code', code);
+        const { data, error } = await db.from('students').select('*').eq('code', code);
+
+        if (error) {
+            alert("Xatolik: " + error.message);
+            return;
+        }
 
         if (data && data.length > 0) {
             const user = data[0];
@@ -329,7 +334,11 @@
     }
 
     async function loadLeaderboard() {
-        const { data } = await db.from('students').select('*').order('points', { ascending: false });
+        const { data, error } = await db.from('students').select('*').order('points', { ascending: false });
+        if (error) {
+            console.error("Leaderboard yuklashda xatolik:", error);
+            return;
+        }
         if (data) {
             let html = '';
             data.forEach((student, index) => {
@@ -348,22 +357,32 @@
     }
 
     async function loadNews() {
-        const { data } = await db.from('news').select('*').order('id', { ascending: false });
-        if (data) {
+        const { data, error } = await db.from('news').select('*').order('id', { ascending: false });
+        if (error) {
+            console.error("News yuklashda xatolik:", error);
+            document.getElementById('home-feed').innerHTML = "Xabarlarni yuklashda xatolik yuz berdi.";
+            document.getElementById('news-feed').innerHTML = "E'lonlarni yuklashda xatolik yuz berdi.";
+            return;
+        }
+
+        if (data && data.length > 0) {
             let html = '';
             data.forEach(n => {
                 html += `
                     <div class="news-card">
                         <div class="news-header">
-                            <span class="news-author"><i class="fa-solid fa-circle-check"></i> ${n.author_name}</span>
+                            <span class="news-author"><i class="fa-solid fa-circle-check"></i> ${n.author_name || 'Admin'}</span>
                         </div>
-                        <p style="font-size: 1.05rem; line-height: 1.5;">${n.content}</p>
-                        ${n.image_url ? `<img src="${n.image_url}" class="news-img" alt="E'lon rasmi">` : ''}
+                        <p style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc;">${n.content}</p>
+                        ${n.image_url ? `<img src="${n.image_url}" class="news-img" alt="E'lon rasmi" onerror="this.style.display='none'">` : ''}
                     </div>
                 `;
             });
-            document.getElementById('home-feed').innerHTML = html || "Hozircha xabarlar yo'q.";
-            document.getElementById('news-feed').innerHTML = html || "Hozircha e'lonlar yo'q.";
+            document.getElementById('home-feed').innerHTML = html;
+            document.getElementById('news-feed').innerHTML = html;
+        } else {
+            document.getElementById('home-feed').innerHTML = "Hozircha xabarlar yo'q.";
+            document.getElementById('news-feed').innerHTML = "Hozircha e'lonlar yo'q.";
         }
     }
 
