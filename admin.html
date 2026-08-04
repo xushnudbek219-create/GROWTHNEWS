@@ -76,6 +76,11 @@
             margin-top: 15px;
         }
 
+        .btn-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .btn-add, .btn-minus, .btn-kick, .btn-delete {
             color: white;
             border: none;
@@ -133,7 +138,7 @@
             <div id="news-management-list">E'lonlar yuklanmoqda...</div>
         </div>
 
-        <!-- O'quvchilarni Boshqarish va Chiqarib Yuborish -->
+        <!-- O'quvchilarni Boshqarish -->
         <div class="card">
             <h2><i class="fa-solid fa-users-gear" style="color: #38bdf8;"></i> O'quvchilarni Boshqarish</h2>
             <table>
@@ -226,20 +231,21 @@
             postBtn.innerText = "Rasm yuklanmoqda...";
             postBtn.disabled = true;
 
+            // Fayl nomidagi xato beruvchi harflarni to'g'rilash
             const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
             const fileName = `${Date.now()}_${cleanFileName}`;
 
-            // Supabase Storage'dagi IMAGE nomli papkaga yuklash
+            // Supabase Storage'dagi IMAGE nomli bucket'ga yuklash
             const { data, error } = await db.storage.from('IMAGE').upload(fileName, file);
 
             if (error) {
-                alert("Rasm yuklashda xatolik yuz berdi: " + error.message);
+                alert("Rasm yuklashda xatolik: " + error.message);
                 postBtn.innerText = "E'lonni Chop Etish";
                 postBtn.disabled = false;
                 return;
             }
 
-            // Public URL/Link olish
+            // Public linkini olish
             const { data: publicUrlData } = db.storage.from('IMAGE').getPublicUrl(fileName);
             imageUrl = publicUrlData.publicUrl;
         }
@@ -253,7 +259,7 @@
         }]);
 
         if (dbError) {
-            alert("E'lonni saqlashda xatolik yuz berdi: " + dbError.message);
+            alert("E'lonni saqlashda xatolik: " + dbError.message);
         } else {
             alert("E'lon va rasm muvaffaqiyatli chop etildi!");
             document.getElementById('announcement-text').value = '';
