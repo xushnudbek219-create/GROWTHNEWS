@@ -95,7 +95,7 @@
         }
         .sub-tab-btn.active { background: rgba(99, 102, 241, 0.3); color: white; border-color: var(--accent-color); }
 
-        input {
+        input, textarea {
             width: 100%;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--glass-border);
@@ -107,7 +107,7 @@
             margin-bottom: 12px;
         }
 
-        input:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
+        input:focus, textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
 
         .btn {
             width: 100%;
@@ -133,6 +133,7 @@
 
         .news-header { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-muted); font-size: 0.85rem; }
         .news-author { color: #818cf8; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .news-author.admin-badge { color: #c084fc; }
         .news-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid var(--glass-border); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
@@ -143,6 +144,19 @@
 
         .code-badge { background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-family: monospace; }
         .user-welcome-box { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent-color); padding: 25px; border-radius: 16px; text-align: center; }
+        
+        .alert-login-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #f59e0b;
+            color: #fbbf24;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -153,7 +167,7 @@
         <p>O'quvchilar va O'qituvchilar Interaktiv Portali</p>
     </div>
 
-    <!-- TEPADAGI NAVIGATSIYA MENYUSI -->
+    <!-- NAVIGATSIYA MENYUSI -->
     <div class="main-nav">
         <button class="nav-btn active" id="nav-home" onclick="showPage('home')"><i class="fa-solid fa-house"></i> Bosh sahifa</button>
         <button class="nav-btn" id="nav-leaderboard" onclick="showPage('leaderboard')"><i class="fa-solid fa-trophy"></i> Leaderboard</button>
@@ -164,7 +178,7 @@
     <!-- 1. BOSH SAHIFA -->
     <div id="page-home">
         <div class="card">
-            <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy Xabarlar va Postlar</h2>
+            <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Barcha Postlar va Xabarlar</h2>
             <div id="home-feed">Xabarlar yuklanmoqda...</div>
         </div>
     </div>
@@ -187,10 +201,27 @@
         </div>
     </div>
 
-    <!-- 3. YANGILIKLAR SAHIFASI -->
+    <!-- 3. YANGILIKLAR SAHIFASI (XABAR YUBORISH BOBI BILAN) -->
     <div id="page-news" style="display: none;">
+        
+        <!-- Post Yuborish Formasi -->
         <div class="card">
-            <h2><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Yangiliklar Bo'limi</h2>
+            <h2><i class="fa-solid fa-paper-plane" style="color: #38bdf8;"></i> Yangi Xabar Yuborish</h2>
+            
+            <div id="login-warning" class="alert-login-box">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Xabar yuborish uchun avval <strong>Profil</strong> bo'limida tizimga kiring!</span>
+            </div>
+
+            <div id="post-form-box" style="display: none;">
+                <textarea id="user-post-content" rows="3" placeholder="Fikringiz yoki xabaringizni yozing..."></textarea>
+                <input type="text" id="user-post-img-url" placeholder="Rasm havolasi (URL linki, ixtiyoriy)...">
+                <button class="btn" onclick="userSendPost()"><i class="fa-solid fa-share"></i> Xabarni Ulashish</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Yangiliklar va Postlar</h2>
             <div id="news-feed">E'lonlar yuklanmoqda...</div>
         </div>
     </div>
@@ -263,6 +294,16 @@
         document.getElementById('tab-reg-btn').classList.toggle('active', tab === 'register');
     }
 
+    function checkUserStatus() {
+        if (currentUser) {
+            document.getElementById('login-warning').style.display = 'none';
+            document.getElementById('post-form-box').style.display = 'block';
+        } else {
+            document.getElementById('login-warning').style.display = 'flex';
+            document.getElementById('post-form-box').style.display = 'none';
+        }
+    }
+
     async function loginUser() {
         const name = document.getElementById('login-name').value.trim();
         const code = document.getElementById('login-code').value.trim();
@@ -281,6 +322,7 @@
             if (user.name.toLowerCase() === name.toLowerCase()) {
                 currentUser = user;
                 showProfile(user.name, user.code, user.points);
+                checkUserStatus();
             } else {
                 alert("Xatolik: Ushbu kod boshqa ismga tegishli!");
             }
@@ -310,7 +352,9 @@
             alert("Xatolik: " + error.message);
         } else {
             alert(`Muvaffaqiyatli ro'yxatdan o'tdingiz!\nKodingiz: ${randomCode}\nUni eslab qoling!`);
+            currentUser = { name: nameInput, code: randomCode, points: 0 };
             showProfile(nameInput, randomCode, 0);
+            checkUserStatus();
             loadLeaderboard();
         }
     }
@@ -329,14 +373,37 @@
         document.getElementById('auth-card').style.display = 'block';
         document.getElementById('login-name').value = '';
         document.getElementById('login-code').value = '';
+        checkUserStatus();
+    }
+
+    async function userSendPost() {
+        if (!currentUser) return alert("Xabar yuborish uchun tizimga kiring!");
+
+        const content = document.getElementById('user-post-content').value.trim();
+        const imageUrl = document.getElementById('user-post-img-url').value.trim();
+
+        if (!content) return alert("Iltimos, xabar matnini kiriting!");
+
+        const { error } = await db.from('news').insert([{
+            author_name: currentUser.name,
+            content: content,
+            image_url: imageUrl || null,
+            is_admin: false
+        }]);
+
+        if (error) {
+            alert("Xatolik: " + error.message);
+        } else {
+            alert("Xabaringiz muvaffaqiyatli yuborildi!");
+            document.getElementById('user-post-content').value = '';
+            document.getElementById('user-post-img-url').value = '';
+            loadNews();
+        }
     }
 
     async function loadLeaderboard() {
         const { data, error } = await db.from('students').select('*').order('points', { ascending: false });
-        if (error) {
-            console.error("Leaderboard yuklashda xatolik:", error);
-            return;
-        }
+        if (error) return;
         if (data) {
             let html = '';
             data.forEach((student, index) => {
@@ -356,23 +423,22 @@
 
     async function loadNews() {
         const { data, error } = await db.from('news').select('*').order('id', { ascending: false });
-        if (error) {
-            console.error("News yuklashda xatolik:", error);
-            document.getElementById('home-feed').innerHTML = "Xabarlarni yuklashda xatolik yuz berdi.";
-            document.getElementById('news-feed').innerHTML = "E'lonlarni yuklashda xatolik yuz berdi.";
-            return;
-        }
+        if (error) return;
 
         if (data && data.length > 0) {
             let html = '';
             data.forEach(n => {
+                const isAdmin = n.is_admin;
                 html += `
                     <div class="news-card">
                         <div class="news-header">
-                            <span class="news-author"><i class="fa-solid fa-circle-check"></i> ${n.author_name || 'Admin'}</span>
+                            <span class="news-author ${isAdmin ? 'admin-badge' : ''}">
+                                <i class="fa-solid ${isAdmin ? 'fa-circle-check' : 'fa-user'}"></i> 
+                                ${n.author_name || 'Foydalanuvchi'} ${isAdmin ? '(Admin)' : ''}
+                            </span>
                         </div>
                         <p style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc;">${n.content}</p>
-                        ${n.image_url ? `<img src="${n.image_url}" class="news-img" alt="E'lon rasmi" onerror="this.style.display='none'">` : ''}
+                        ${n.image_url ? `<img src="${n.image_url}" class="news-img" alt="Rasm" onerror="this.style.display='none'">` : ''}
                     </div>
                 `;
             });
@@ -384,6 +450,7 @@
         }
     }
 
+    checkUserStatus();
     loadLeaderboard();
     loadNews();
 </script>
