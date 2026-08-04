@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Community | O'quvchilar Portali</title>
-    <!-- Google Fonts: Inter -->
+    <title>Growth Community | Rasmiy Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Ikonkalari -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -18,90 +15,27 @@
             --glass-border: rgba(255, 255, 255, 0.12);
             --accent-color: #6366f1;
             --accent-glow: rgba(99, 102, 241, 0.4);
-            --neon-green: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
 
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; transition: all 0.3s ease; }
 
         body {
             background: var(--bg-gradient);
             min-height: 100vh;
             color: var(--text-main);
-            padding: 20px 10px;
+            padding: 30px 15px;
             display: flex;
             justify-content: center;
         }
 
-        .container {
-            width: 100%;
-            max-width: 850px;
-        }
+        .container { width: 100%; max-width: 850px; }
 
-        /* Header Logo */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(90deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { color: var(--text-muted); margin-top: 5px; }
 
-        .header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
-        }
-
-        .header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 5px;
-        }
-
-        /* Navigatsiya Menyusi */
-        .nav {
-            display: flex;
-            gap: 10px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            padding: 8px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .nav button {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .nav button.active, .nav button:hover {
-            background: var(--accent-color);
-            color: white;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        /* Glassmorphism Kartochkalar */
         .card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
@@ -109,25 +43,12 @@
             padding: 25px;
             border-radius: 20px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            margin-bottom: 20px;
-            animation: fadeIn 0.4s ease-in-out;
+            margin-bottom: 25px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        h2 { font-size: 1.3rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: #e2e8f0; }
 
-        h2 {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Input va Tugmalar */
-        input, textarea {
+        input {
             width: 100%;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--glass-border);
@@ -136,15 +57,11 @@
             color: white;
             font-size: 1rem;
             outline: none;
-            margin-top: 10px;
         }
 
-        input:focus, textarea:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
+        input:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
 
-        .btn-action {
+        .btn {
             width: 100%;
             background: linear-gradient(90deg, #6366f1, #8b5cf6);
             color: white;
@@ -154,317 +71,138 @@
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px var(--accent-glow);
+            margin-top: 12px;
         }
 
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px var(--accent-glow);
-        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
 
-        /* Neon Kod Box */
-        .code-box {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #4ade80;
-            text-align: center;
-            letter-spacing: 8px;
-            margin: 15px 0;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px dashed var(--neon-green);
-            padding: 15px;
-            border-radius: 14px;
-            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-        }
-
-        /* Reyting Jadvallari */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px;
-            margin-top: 10px;
-        }
-
-        th {
-            color: var(--text-muted);
-            font-weight: 600;
-            text-align: left;
-            padding: 10px 15px;
-        }
-
-        td {
+        .news-card {
             background: rgba(255, 255, 255, 0.03);
-            padding: 14px 15px;
-            border-top: 1px solid var(--glass-border);
-            border-bottom: 1px solid var(--glass-border);
+            border: 1px solid var(--glass-border);
+            padding: 18px;
+            border-radius: 16px;
+            margin-bottom: 15px;
         }
 
+        .news-header { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-muted); font-size: 0.85rem; }
+        .news-author { color: #818cf8; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .news-img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid var(--glass-border); }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
+        th { color: var(--text-muted); font-weight: 600; text-align: left; padding: 10px 15px; }
+        td { background: rgba(255, 255, 255, 0.03); padding: 14px 15px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
         td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
         td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
 
-        .rank-badge {
-            display: inline-block;
-            width: 28px;
-            height: 28px;
-            line-height: 28px;
-            text-align: center;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-
-        .rank-1 { background: #fbbf24; color: #000; box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
-        .rank-2 { background: #94a3b8; color: #000; }
-        .rank-3 { background: #b45309; color: #fff; }
-
-        /* Mobil Moslashuvchanlik */
-        @media (max-width: 600px) {
-            .nav button span { display: none; }
-            .nav button i { font-size: 1.2rem; }
-        }
+        .code-badge { background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-family: monospace; }
+        .result-box { display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1><i class="fa-solid fa-graduation-cap"></i> Growth Community</h1>
-        <p>O'quvchilar va Hamjamiyat Boshqaruv Portali</p>
+        <h1>GROWTH COMMUNITY</h1>
+        <p>O'quvchilar va O'qituvchilar Interaktiv Portali</p>
     </div>
 
-    <!-- Navigatsiya -->
-    <div class="nav">
-        <button id="btn-home" class="active" onclick="showTab('home')"><i class="fa-solid fa-house"></i> <span>E'lonlar</span></button>
-        <button id="btn-news" onclick="showTab('news')"><i class="fa-solid fa-newspaper"></i> <span>Yangiliklar</span></button>
-        <button id="btn-leaderboard" onclick="showTab('leaderboard')"><i class="fa-solid fa-trophy"></i> <span>Reyting</span></button>
-        <button id="btn-profile" onclick="showTab('profile')"><i class="fa-solid fa-user"></i> <span>Profil</span></button>
+    <!-- 1. Ro'yxatdan o'tish -->
+    <div class="card">
+        <h2><i class="fa-solid fa-user-plus" style="color: #6366f1;"></i> Ro'yxatdan O'tish</h2>
+        <input type="text" id="reg-name" placeholder="Ism va Familiyangizni kiriting...">
+        <button class="btn" onclick="registerUser()"><i class="fa-solid fa-key"></i> Maxsus Kod Olish</button>
+        <div id="reg-result" class="result-box"></div>
     </div>
 
-    <!-- 1. BOSH SAHIFA -->
-    <div id="home" class="tab-content">
-        <div class="card">
-            <h2><i class="fa-solid fa-bullhorn" style="color: #818cf8;"></i> Muhim E'lonlar</h2>
-            <div id="admin-posts">E'lonlar yuklanmoqda...</div>
-        </div>
+    <!-- 2. Rasmiy E'lonlar -->
+    <div class="card">
+        <h2><i class="fa-solid fa-newspaper" style="color: #c084fc;"></i> Rasmiy E'lonlar</h2>
+        <div id="news-feed">E'lonlar yuklanmoqda...</div>
     </div>
 
-    <!-- 2. YANGILIKLAR -->
-    <div id="news" class="tab-content" style="display:none;">
-        <div class="card">
-            <h2><i class="fa-solid fa-pen-to-square" style="color: #c084fc;"></i> Fikr yoki Yangilik qoldirish</h2>
-            <textarea id="news-input" rows="3" placeholder="Nimadir ulashmoqchimisiz? Shu yerga yozing..."></textarea>
-            <button class="btn-action" onclick="addNews()"><i class="fa-solid fa-paper-plane"></i> Ulashish</button>
-        </div>
-        <div class="card">
-            <h2><i class="fa-solid fa-comments" style="color: #38bdf8;"></i> Barcha xabarlar</h2>
-            <div id="all-news">Yuklanmoqda...</div>
-        </div>
-    </div>
-
-    <!-- 3. LEADERBOARD -->
-    <div id="leaderboard" class="tab-content" style="display:none;">
-        <div class="card">
-            <h2><i class="fa-solid fa-award" style="color: #fbbf24;"></i> O'quvchilar Reytingi</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>O'quvchi</th>
-                        <th>Ball</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-body"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- 4. SHAXSIY PROFIL -->
-    <div id="profile" class="tab-content" style="display:none;">
-        <div id="register-box" class="card">
-            <h2><i class="fa-solid fa-user-plus" style="color: #34d399;"></i> Ro'yxatdan o'tish</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Ismingizni kiriting va 5 xonali maxsus kodingizni oling!</p>
-            <input type="text" id="reg-name" placeholder="Ism va Familiyangiz">
-            <button class="btn-action" onclick="registerUser()">Kodni Olish</button>
-            <div id="reg-result"></div>
-        </div>
-
-        <div id="login-box" class="card">
-            <h2><i class="fa-solid fa-key" style="color: #f43f5e;"></i> Profilga Kirish</h2>
-            <input type="text" id="login-code" placeholder="5 xonali kodingizni kiriting" maxlength="5">
-            <button class="btn-action" style="background: linear-gradient(90deg, #10b981, #059669);" onclick="loginUser()">Kirish</button>
-        </div>
-
-        <div id="user-profile" class="card" style="display:none;">
-            <h2 id="user-name-title"></h2>
-            <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; margin-top: 15px;">
-                <p style="color: var(--text-muted);">Sizning Jami Ballaringiz:</p>
-                <h1 id="user-points" style="font-size: 3rem; color: var(--neon-green); text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); margin: 10px 0;">0</h1>
-                <p style="color: var(--text-muted); margin-top: 15px;">Sizning Maxsus Kodingiz:</p>
-                <div id="user-code-display" class="code-box"></div>
-            </div>
-            <button onclick="logout()" class="btn-action" style="background: #ef4444; margin-top: 20px;">Chiqish</button>
-        </div>
+    <!-- 3. Reyting Jadvali -->
+    <div class="card">
+        <h2><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> O'quvchilar Reytingi</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>O'rin</th>
+                    <th>Ism</th>
+                    <th>Maxsus Kod</th>
+                    <th>Ball</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard"></tbody>
+        </table>
     </div>
 </div>
 
 <script>
     const SUPABASE_URL = "https://hdgikkxjnfxzzpiqujvl.supabase.co";
     const SUPABASE_KEY = "sb_publishable_iSEwPuZi560nIxxvcjdPDA_rySiE4q0";
-    
+
     const { createClient } = window.supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let currentUser = null;
-
-    function showTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.nav button').forEach(el => el.classList.remove('active'));
-        
-        document.getElementById(tabId).style.display = 'block';
-        document.getElementById('btn-' + tabId).classList.add('active');
-
-        if (tabId === 'leaderboard') loadLeaderboard();
-        if (tabId === 'home') loadHomePosts();
-        if (tabId === 'news') loadAllNews();
-    }
-
-    function generate5DigitCode() {
-        return Math.floor(10000 + Math.random() * 90000).toString();
-    }
-
     async function registerUser() {
-        const name = document.getElementById('reg-name').value;
-        if (!name) return alert("Ismingizni kiriting!");
+        const nameInput = document.getElementById('reg-name').value.trim();
+        if (!nameInput) return alert("Iltimos, ismingizni kiriting!");
 
-        const code = generate5DigitCode();
+        const randomCode = Math.floor(10000 + Math.random() * 90000).toString();
 
-        const { data, error } = await db
-            .from('students')
-            .insert([{ name: name, code: code, points: 0 }])
-            .select();
+        const { data, error } = await db.from('students').insert([{ name: nameInput, code: randomCode, points: 0 }]);
 
         if (error) {
             alert("Xatolik yuz berdi: " + error.message);
         } else {
-            document.getElementById('reg-result').innerHTML = `
-                <div style="margin-top: 20px; text-align: center;">
-                    <p style="color: #34d399; font-weight:bold;">Muvaffaqiyatli ro'yxatdan o'tdingiz!</p>
-                    <div class="code-box">${code}</div>
-                    <small style="color: var(--text-muted);">Ushbu kodni eslab qoling! Profilga kirish uchun shart.</small>
-                </div>
-            `;
+            const resBox = document.getElementById('reg-result');
+            resBox.style.display = 'block';
+            resBox.innerHTML = `Siz muvaffaqiyatli ro'yxatdan o'tdingiz!<br> Sizning maxsus kodingiz: <strong class="code-badge">${randomCode}</strong>`;
             document.getElementById('reg-name').value = '';
+            loadLeaderboard();
         }
-    }
-
-    async function loginUser() {
-        const code = document.getElementById('login-code').value;
-        if (!code) return alert("Kodni kiriting!");
-
-        const { data, error } = await db
-            .from('students')
-            .select('*')
-            .eq('code', code)
-            .single();
-
-        if (error || !data) {
-            alert("Bunday kodli o'quvchi topilmadi!");
-        } else {
-            currentUser = data;
-            document.getElementById('register-box').style.display = 'none';
-            document.getElementById('login-box').style.display = 'none';
-            document.getElementById('user-profile').style.display = 'block';
-            
-            document.getElementById('user-name-title').innerText = "Salom, " + data.name + " 👋";
-            document.getElementById('user-points').innerText = data.points;
-            document.getElementById('user-code-display').innerText = data.code;
-        }
-    }
-
-    function logout() {
-        currentUser = null;
-        document.getElementById('register-box').style.display = 'block';
-        document.getElementById('login-box').style.display = 'block';
-        document.getElementById('user-profile').style.display = 'none';
     }
 
     async function loadLeaderboard() {
-        const { data } = await db
-            .from('students')
-            .select('*')
-            .order('points', { ascending: false });
-
+        const { data, error } = await db.from('students').select('*').order('points', { ascending: false });
         if (data) {
             let html = '';
             data.forEach((student, index) => {
-                let badgeClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+                let badgeClass = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
                 html += `
                     <tr>
-                        <td><span class="rank-badge ${badgeClass}">${index + 1}</span></td>
-                        <td><strong>${student.name}</strong></td>
-                        <td><span style="color: #4ade80; font-weight: bold; font-size: 1.1rem;">${student.points}</span> ball</td>
+                        <td><strong>${badgeClass}</strong></td>
+                        <td>${student.name}</td>
+                        <td><span class="code-badge">${student.code}</span></td>
+                        <td><strong style="color: #10b981;">${student.points}</strong> ball</td>
                     </tr>
                 `;
             });
-            document.getElementById('leaderboard-body').innerHTML = html || "<tr><td colspan='3'>Hozircha hech kim yo'q</td></tr>";
+            document.getElementById('leaderboard').innerHTML = html || "<tr><td colspan='4'>Hozircha hech kim ro'yxatdan o'tmadi.</td></tr>";
         }
     }
 
-    async function addNews() {
-        const content = document.getElementById('news-input').value;
-        if (!content) return alert("Matn kiriting!");
-
-        const author = currentUser ? currentUser.name : "Anonym (O'quvchi)";
-
-        await db.from('news').insert([{ author_name: author, content: content, is_admin: false }]);
-        document.getElementById('news-input').value = '';
-        loadAllNews();
-    }
-
-    async function loadAllNews() {
-        const { data } = await db
-            .from('news')
-            .select('*')
-            .eq('is_admin', false)
-            .order('created_at', { ascending: false });
-
-        if (data && data.length > 0) {
+    async function loadNews() {
+        const { data, error } = await db.from('news').select('*').order('id', { ascending: false });
+        if (data) {
             let html = '';
-            data.forEach(item => {
-                html += `<div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; margin-bottom: 10px;">
-                    <strong style="color: #818cf8;">${item.author_name}</strong>
-                    <p style="margin-top: 5px; color: #e2e8f0;">${item.content}</p>
-                </div>`;
+            data.forEach(n => {
+                html += `
+                    <div class="news-card">
+                        <div class="news-header">
+                            <span class="news-author"><i class="fa-solid fa-circle-check"></i> ${n.author_name}</span>
+                        </div>
+                        <p style="font-size: 1.05rem; line-height: 1.5;">${n.content}</p>
+                        ${n.image_url ? `<img src="${n.image_url}" class="news-img" alt="E'lon rasmi">` : ''}
+                    </div>
+                `;
             });
-            document.getElementById('all-news').innerHTML = html;
-        } else {
-            document.getElementById('all-news').innerHTML = "Hozircha yangiliklar yo'q.";
+            document.getElementById('news-feed').innerHTML = html || "Hozircha e'lonlar yo'q.";
         }
     }
 
-    async function loadHomePosts() {
-        const { data } = await db
-            .from('news')
-            .select('*')
-            .eq('is_admin', true)
-            .order('created_at', { ascending: false });
-
-        if (data && data.length > 0) {
-            let html = '';
-            data.forEach(item => {
-                html += `<div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2)); border: 1px solid var(--accent-color); padding: 18px; border-radius: 14px; margin-bottom: 12px;">
-                    <h4 style="color: #a78bfa;"><i class="fa-solid fa-circle-check"></i> Rasmiy E'lon</h4>
-                    <p style="margin-top: 8px; font-size: 1.05rem; color: #f8fafc;">${item.content}</p>
-                </div>`;
-            });
-            document.getElementById('admin-posts').innerHTML = html;
-        } else {
-            document.getElementById('admin-posts').innerHTML = "Hozircha muhim e'lonlar yo'q.";
-        }
-    }
-
-    loadHomePosts();
+    loadLeaderboard();
+    loadNews();
 </script>
 
 </body>
