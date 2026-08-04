@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Growth Community</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Ikonkalari -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --accent-color: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --neon-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; transition: all 0.3s ease; }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container { width: 100%; max-width: 850px; }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin-bottom: 25px;
+        }
+
+        h2 { font-size: 1.4rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+
+        input, textarea {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            margin-top: 10px;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .btn-action {
+            width: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
+
+        .btn-add {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-add:hover { background: #059669; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
+        th { color: var(--text-muted); font-weight: 600; text-align: left; padding: 10px 15px; }
+        td { background: rgba(255, 255, 255, 0.03); padding: 14px 15px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+        td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
+        td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Admin Paroli kiritish paneli -->
+    <div id="login-box" class="card" style="max-width: 450px; margin: 50px auto;">
+        <h2><i class="fa-solid fa-lock" style="color: #6366f1;"></i> Admin Kirish</h2>
+        <input type="password" id="admin-pass" placeholder="Admin parolini kiriting...">
+        <button class="btn-action" onclick="checkPassword()"><i class="fa-solid fa-right-to-bracket"></i> Kirish</button>
+    </div>
+
+    <!-- Admin Boshqaruv paneli -->
+    <div id="admin-dashboard" style="display:none;">
+        <div class="card">
+            <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy E'lon Jo'natish</h2>
+            <textarea id="announcement-text" rows="3" placeholder="Bosh sahifada ko'rinadigan e'lon matnini kiriting..."></textarea>
+            <button class="btn-action" onclick="postAnnouncement()"><i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish</button>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-users" style="color: #38bdf8;"></i> O'quvchilar Ro'yxati va Ball Boshqaruvi</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ism</th>
+                        <th>Maxsus Kod</th>
+                        <th>Joriy Ball</th>
+                        <th>Amal</th>
+                    </tr>
+                </thead>
+                <tbody id="student-list"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ADMIN_PASSWORD = "12345"; // Admin paroli
+
+    const SUPABASE_URL = "https://hdgikkxjnfxzzpiqujvl.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_iSEwPuZi560nIxxvcjdPDA_rySiE4q0";
+
+    const { createClient } = window.supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function checkPassword() {
+        const inputPass = document.getElementById('admin-pass').value;
+        if (inputPass === ADMIN_PASSWORD) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('admin-dashboard').style.display = 'block';
+            loadStudents();
+        } else {
+            alert("Noto'g'ri parol!");
+        }
+    }
+
+    async function loadStudents() {
+        const { data, error } = await db.from('students').select('*').order('id', { ascending: false });
+        if (data) {
+            let html = '';
+            data.forEach(s => {
+                html += `
+                    <tr>
+                        <td><strong>${s.name}</strong></td>
+                        <td><span style="color: #fbbf24; font-family: monospace; font-size: 1.1rem;">${s.code}</span></td>
+                        <td><strong style="color: #10b981;">${s.points}</strong> ball</td>
+                        <td>
+                            <button class="btn-add" onclick="addPoints(${s.id}, ${s.points}, 5)">+5 Ball</button>
+                            <button class="btn-add" style="background: #3b82f6;" onclick="addPoints(${s.id}, ${s.points}, 10)">+10 Ball</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('student-list').innerHTML = html || "<tr><td colspan='4'>Hozircha o'quvchilar yo'q.</td></tr>";
+        }
+    }
+
+    async function addPoints(id, currentPoints, pointsToAdd) {
+        const newPoints = currentPoints + pointsToAdd;
+        await db.from('students').update({ points: newPoints }).eq('id', id);
+        loadStudents();
+    }
+
+    async function postAnnouncement() {
+        const text = document.getElementById('announcement-text').value;
+        if (!text) return alert("Matn kiriting!");
+
+        await db.from('news').insert([{ author_name: "Admin", content: text, is_admin: true }]);
+        alert("E'lon muvaffaqiyatli joylandi!");
+        document.getElementById('announcement-text').value = '';
+    }
+</script>
+
+</body>
+</html>
