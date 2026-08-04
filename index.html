@@ -95,7 +95,7 @@
         td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
 
         .code-badge { background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-family: monospace; }
-        .result-box { display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
+        .user-welcome-box { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent-color); padding: 20px; border-radius: 16px; text-align: center; }
     </style>
 </head>
 <body>
@@ -106,21 +106,18 @@
         <p>O'quvchilar va O'qituvchilar Interaktiv Portali</p>
     </div>
 
-    <!-- 1. Ro'yxatdan o'tish -->
-    <div class="card">
-        <h2><i class="fa-solid fa-user-plus" style="color: #6366f1;"></i> Ro'yxatdan O'tish</h2>
-        <input type="text" id="reg-name" placeholder="Ism va Familiyangizni kiriting...">
-        <button class="btn" onclick="registerUser()"><i class="fa-solid fa-key"></i> Maxsus Kod Olish</button>
-        <div id="reg-result" class="result-box"></div>
+    <!-- User Status (Ro'yxatdan o'tish yoki Profil xabari) -->
+    <div class="card" id="user-section">
+        <!-- Bu yerga JS dinamik ravishda shakl yoki profildagilarni joylaydi -->
     </div>
 
-    <!-- 2. Rasmiy E'lonlar -->
+    <!-- Rasmiy E'lonlar -->
     <div class="card">
         <h2><i class="fa-solid fa-newspaper" style="color: #c084fc;"></i> Rasmiy E'lonlar</h2>
         <div id="news-feed">E'lonlar yuklanmoqda...</div>
     </div>
 
-    <!-- 3. Reyting Jadvali -->
+    <!-- Reyting Jadvali -->
     <div class="card">
         <h2><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> O'quvchilar Reytingi</h2>
         <table>
@@ -144,9 +141,32 @@
     const { createClient } = window.supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    function initUserSession() {
+        const savedCode = localStorage.getItem('growth_user_code');
+        const savedName = localStorage.getItem('growth_user_name');
+
+        const userSection = document.getElementById('user-section');
+
+        if (savedCode && savedName) {
+            userSection.innerHTML = `
+                <div class="user-welcome-box">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Xush kelibsiz, <span style="color: #818cf8;">${savedName}</span>! 👋</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 12px;">Sizning maxsus kodingiz: <strong class="code-badge">${savedCode}</strong></p>
+                    <button style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.85rem;" onclick="resetUser()">Boshqa hisobdan kirish</button>
+                </div>
+            `;
+        } else {
+            userSection.innerHTML = `
+                <h2><i class="fa-solid fa-user-plus" style="color: #6366f1;"></i> Ro'yxatdan O'tish</h2>
+                <input type="text" id="reg-name" placeholder="Ism va Familiyangizni kiriting...">
+                <button class="btn" onclick="registerUser()"><i class="fa-solid fa-key"></i> Maxsus Kod Olish</button>
+            `;
+        }
+    }
+
     async function registerUser() {
         const nameInput = document.getElementById('reg-name').value.trim();
-        if (!nameInput) return alert("Iltimos, ismingizni kiriting!");
+        if (!nameInput) return alert("Iltimos, ism va familiyangizni kiriting!");
 
         const randomCode = Math.floor(10000 + Math.random() * 90000).toString();
 
@@ -155,11 +175,18 @@
         if (error) {
             alert("Xatolik yuz berdi: " + error.message);
         } else {
-            const resBox = document.getElementById('reg-result');
-            resBox.style.display = 'block';
-            resBox.innerHTML = `Siz muvaffaqiyatli ro'yxatdan o'tdingiz!<br> Sizning maxsus kodingiz: <strong class="code-badge">${randomCode}</strong>`;
-            document.getElementById('reg-name').value = '';
+            localStorage.setItem('growth_user_code', randomCode);
+            localStorage.setItem('growth_user_name', nameInput);
+            initUserSession();
             loadLeaderboard();
+        }
+    }
+
+    function resetUser() {
+        if (confirm("Rostdan ham profilni brauzerdan o'chirmoqchimisiz?")) {
+            localStorage.removeItem('growth_user_code');
+            localStorage.removeItem('growth_user_name');
+            initUserSession();
         }
     }
 
@@ -201,6 +228,7 @@
         }
     }
 
+    initUserSession();
     loadLeaderboard();
     loadNews();
 </script>
