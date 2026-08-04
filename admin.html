@@ -56,11 +56,6 @@
             margin-top: 10px;
         }
 
-        input[type="file"] {
-            cursor: pointer;
-            padding: 10px;
-        }
-
         input:focus, textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
 
         .btn-action {
@@ -76,11 +71,6 @@
             margin-top: 15px;
         }
 
-        .btn-action:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
         .btn-add, .btn-minus, .btn-kick, .btn-delete {
             color: white;
             border: none;
@@ -94,7 +84,6 @@
         .btn-add { background: #10b981; }
         .btn-minus { background: #f59e0b; }
         .btn-kick { background: #ef4444; margin-left: 10px; }
-        .btn-kick:hover { background: #b91c1c; }
 
         .btn-delete { background: #ef4444; padding: 8px 12px; }
 
@@ -105,7 +94,6 @@
         td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
 
         .news-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 12px 18px; border-radius: 12px; margin-top: 10px; }
-        .file-label { display: block; margin-top: 12px; color: var(--text-muted); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -126,15 +114,14 @@
             <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy E'lon va Rasm Joylash</h2>
             <textarea id="announcement-text" rows="3" placeholder="E'lon matnini kiriting..."></textarea>
             
-            <label class="file-label"><i class="fa-solid fa-image"></i> Kompyuterdan rasm tanlang (ixtiyoriy):</label>
-            <input type="file" id="announcement-file" accept="image/*">
+            <input type="text" id="announcement-img-url" placeholder="Rasm havolasi (URL linki, masalan: https://site.com/image.jpg)... (ixtiyoriy)">
 
-            <button class="btn-action" id="post-btn" onclick="postAnnouncement()"><i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish</button>
+            <button class="btn-action" onclick="postAnnouncement()"><i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish</button>
         </div>
 
         <!-- Yuborilgan E'lonlarni O'chirish -->
         <div class="card">
-            <h2><i class="fa-solid fa-trash-can" style="color: #ef4444;"></i> Yuborilgan E'lonlar va Ularni O'chirish</h2>
+            <h2><i class="fa-solid fa-trash-can" style="color: #ef4444;"></i> Yuborilgan E'lonlar</h2>
             <div id="news-management-list">E'lonlar yuklanmoqda...</div>
         </div>
 
@@ -147,7 +134,7 @@
                         <th>Ism</th>
                         <th>Kod</th>
                         <th>Ball</th>
-                        <th>Ball berish va Chiqarib yuborish</th>
+                        <th>Amallar</th>
                     </tr>
                 </thead>
                 <tbody id="student-list"></tbody>
@@ -192,8 +179,7 @@
                             <button class="btn-add" onclick="updatePoints(${s.id}, ${s.points}, 5)">+5</button>
                             <button class="btn-add" style="background:#3b82f6;" onclick="updatePoints(${s.id}, ${s.points}, 10)">+10</button>
                             <button class="btn-minus" onclick="updatePoints(${s.id}, ${s.points}, -5)">-5</button>
-                            
-                            <button class="btn-kick" onclick="deleteStudent(${s.id}, '${s.name}')"><i class="fa-solid fa-user-xmark"></i> Chiqarib yuborish</button>
+                            <button class="btn-kick" onclick="deleteStudent(${s.id}, '${s.name}')"><i class="fa-solid fa-user-xmark"></i> O'chirish</button>
                         </td>
                     </tr>
                 `;
@@ -218,57 +204,25 @@
 
     async function postAnnouncement() {
         const text = document.getElementById('announcement-text').value.trim();
-        const fileInput = document.getElementById('announcement-file');
-        const file = fileInput.files[0];
-        const postBtn = document.getElementById('post-btn');
+        const imageUrl = document.getElementById('announcement-img-url').value.trim();
 
         if (!text) return alert("E'lon matnini kiriting!");
 
-        let imageUrl = null;
-
-        // Agar rasm tanlangan bo'lsa
-        if (file) {
-            postBtn.innerText = "Rasm yuklanmoqda...";
-            postBtn.disabled = true;
-
-            // Fayl nomidagi xato beruvchi harflarni to'g'rilash
-            const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-            const fileName = `${Date.now()}_${cleanFileName}`;
-
-            // Supabase Storage'dagi IMAGE nomli bucket'ga yuklash
-            const { data, error } = await db.storage.from('IMAGE').upload(fileName, file);
-
-            if (error) {
-                alert("Rasm yuklashda xatolik: " + error.message);
-                postBtn.innerText = "E'lonni Chop Etish";
-                postBtn.disabled = false;
-                return;
-            }
-
-            // Public linkini olish
-            const { data: publicUrlData } = db.storage.from('IMAGE').getPublicUrl(fileName);
-            imageUrl = publicUrlData.publicUrl;
-        }
-
-        // Database (news) ga saqlash
         const { error: dbError } = await db.from('news').insert([{ 
             author_name: "Admin", 
             content: text, 
-            image_url: imageUrl,
+            image_url: imageUrl || null,
             is_admin: true 
         }]);
 
         if (dbError) {
             alert("E'lonni saqlashda xatolik: " + dbError.message);
         } else {
-            alert("E'lon va rasm muvaffaqiyatli chop etildi!");
+            alert("E'lon muvaffaqiyatli chop etildi!");
             document.getElementById('announcement-text').value = '';
-            fileInput.value = '';
+            document.getElementById('announcement-img-url').value = '';
+            loadNewsForAdmin();
         }
-
-        postBtn.innerText = "E'lonni Chop Etish";
-        postBtn.disabled = false;
-        loadNewsForAdmin();
     }
 
     async function loadNewsForAdmin() {
