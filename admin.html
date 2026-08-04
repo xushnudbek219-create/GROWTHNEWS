@@ -56,10 +56,7 @@
             margin-top: 10px;
         }
 
-        input:focus, textarea:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
+        input:focus, textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
 
         .btn-action {
             width: 100%;
@@ -74,9 +71,7 @@
             margin-top: 15px;
         }
 
-        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
-
-        .btn-add, .btn-minus, .btn-delete {
+        .btn-add, .btn-minus, .btn-kick, .btn-delete {
             color: white;
             border: none;
             padding: 6px 10px;
@@ -87,13 +82,11 @@
         }
 
         .btn-add { background: #10b981; }
-        .btn-add:hover { background: #059669; }
+        .btn-minus { background: #f59e0b; }
+        .btn-kick { background: #ef4444; margin-left: 10px; }
+        .btn-kick:hover { background: #b91c1c; }
 
-        .btn-minus { background: #ef4444; }
-        .btn-minus:hover { background: #dc2626; }
-
-        .btn-delete { background: #dc2626; padding: 8px 12px; }
-        .btn-delete:hover { background: #991b1b; }
+        .btn-delete { background: #ef4444; padding: 8px 12px; }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
         th { color: var(--text-muted); font-weight: 600; text-align: left; padding: 10px 15px; }
@@ -101,32 +94,21 @@
         td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
         td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
 
-        .news-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 12px 18px;
-            border-radius: 12px;
-            margin-top: 10px;
-        }
+        .news-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 12px 18px; border-radius: 12px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Admin Paroli kiritish paneli -->
     <div id="login-box" class="card" style="max-width: 450px; margin: 50px auto;">
         <h2><i class="fa-solid fa-lock" style="color: #6366f1;"></i> Admin Kirish</h2>
         <input type="password" id="admin-pass" placeholder="Admin parolini kiriting...">
         <button class="btn-action" onclick="checkPassword()"><i class="fa-solid fa-right-to-bracket"></i> Kirish</button>
     </div>
 
-    <!-- Admin Boshqaruv paneli -->
     <div id="admin-dashboard" style="display:none;">
         
-        <!-- Rasmli E'lon Jo'natish -->
+        <!-- Rasmiy E'lon Jo'natish -->
         <div class="card">
             <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy E'lon Jo'natish</h2>
             <textarea id="announcement-text" rows="3" placeholder="E'lon matnini kiriting..."></textarea>
@@ -134,22 +116,22 @@
             <button class="btn-action" onclick="postAnnouncement()"><i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish</button>
         </div>
 
-        <!-- Barcha E'lonlarni Boshqarish va O'chirish -->
+        <!-- Yuborilgan E'lonlarni O'chirish -->
         <div class="card">
             <h2><i class="fa-solid fa-trash-can" style="color: #ef4444;"></i> Yuborilgan E'lonlar va Ularni O'chirish</h2>
             <div id="news-management-list">E'lonlar yuklanmoqda...</div>
         </div>
 
-        <!-- O'quvchilar Ro'yxati -->
+        <!-- O'quvchilarni Boshqarish va Chiqarib Yuborish (O'chirish) -->
         <div class="card">
-            <h2><i class="fa-solid fa-users" style="color: #38bdf8;"></i> O'quvchilar Ro'yxati va Ball Boshqaruvi</h2>
+            <h2><i class="fa-solid fa-users-gear" style="color: #38bdf8;"></i> O'quvchilarni Boshqarish</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Ism</th>
-                        <th>Maxsus Kod</th>
-                        <th>Joriy Ball</th>
-                        <th>Ball Berish / Ayirish</th>
+                        <th>Kod</th>
+                        <th>Ball</th>
+                        <th>Ball berish va Chiqarib yuborish</th>
                     </tr>
                 </thead>
                 <tbody id="student-list"></tbody>
@@ -181,20 +163,21 @@
     }
 
     async function loadStudents() {
-        const { data, error } = await db.from('students').select('*').order('id', { ascending: false });
+        const { data } = await db.from('students').select('*').order('id', { ascending: false });
         if (data) {
             let html = '';
             data.forEach(s => {
                 html += `
                     <tr>
                         <td><strong>${s.name}</strong></td>
-                        <td><span style="color: #fbbf24; font-family: monospace; font-size: 1.1rem;">${s.code}</span></td>
-                        <td><strong style="color: #10b981; font-size: 1.1rem;">${s.points}</strong> ball</td>
+                        <td><span style="color: #fbbf24; font-family: monospace;">${s.code}</span></td>
+                        <td><strong style="color: #10b981;">${s.points}</strong> ball</td>
                         <td>
                             <button class="btn-add" onclick="updatePoints(${s.id}, ${s.points}, 5)">+5</button>
-                            <button class="btn-add" style="background: #3b82f6;" onclick="updatePoints(${s.id}, ${s.points}, 10)">+10</button>
+                            <button class="btn-add" style="background:#3b82f6;" onclick="updatePoints(${s.id}, ${s.points}, 10)">+10</button>
                             <button class="btn-minus" onclick="updatePoints(${s.id}, ${s.points}, -5)">-5</button>
-                            <button class="btn-minus" style="background: #b91c1c;" onclick="updatePoints(${s.id}, ${s.points}, -10)">-10</button>
+                            
+                            <button class="btn-kick" onclick="deleteStudent(${s.id}, '${s.name}')"><i class="fa-solid fa-user-xmark"></i> Chiqarib yuborish</button>
                         </td>
                     </tr>
                 `;
@@ -206,9 +189,15 @@
     async function updatePoints(id, currentPoints, pointsChange) {
         let newPoints = currentPoints + pointsChange;
         if (newPoints < 0) newPoints = 0;
-
         await db.from('students').update({ points: newPoints }).eq('id', id);
         loadStudents();
+    }
+
+    async function deleteStudent(id, name) {
+        if (confirm(`Rostdan ham ${name} ismli o'quvchini tizimdan chiqarib yubormoqchimisiz?`)) {
+            await db.from('students').delete().eq('id', id);
+            loadStudents();
+        }
     }
 
     async function postAnnouncement() {
@@ -224,7 +213,7 @@
             is_admin: true 
         }]);
 
-        alert("E'lon muvaffaqiyatli joylandi!");
+        alert("E'lon chop etildi!");
         document.getElementById('announcement-text').value = '';
         document.getElementById('announcement-image').value = '';
         loadNewsForAdmin();
@@ -237,10 +226,7 @@
             data.forEach(n => {
                 html += `
                     <div class="news-item">
-                        <div>
-                            <strong>${n.author_name}:</strong> ${n.content.substring(0, 50)}...
-                            ${n.image_url ? '<i class="fa-solid fa-image" style="color:#38bdf8; margin-left: 10px;"></i>' : ''}
-                        </div>
+                        <div><strong>${n.author_name}:</strong> ${n.content.substring(0, 40)}...</div>
                         <button class="btn-delete" onclick="deleteNews(${n.id})"><i class="fa-solid fa-trash"></i> O'chirish</button>
                     </div>
                 `;
@@ -250,7 +236,7 @@
     }
 
     async function deleteNews(id) {
-        if (confirm("Ushbu e'lonni o'chirishni tasdiqlaysizmi?")) {
+        if (confirm("E'lonni o'chirishni tasdiqlaysizmi?")) {
             await db.from('news').delete().eq('id', id);
             loadNewsForAdmin();
         }
