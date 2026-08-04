@@ -56,6 +56,11 @@
             margin-top: 10px;
         }
 
+        input[type="file"] {
+            cursor: pointer;
+            padding: 10px;
+        }
+
         input:focus, textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
 
         .btn-action {
@@ -95,6 +100,7 @@
         td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
 
         .news-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 12px 18px; border-radius: 12px; margin-top: 10px; }
+        .file-label { display: block; margin-top: 12px; color: var(--text-muted); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -110,10 +116,13 @@
         
         <!-- Rasmiy E'lon Jo'natish -->
         <div class="card">
-            <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy E'lon Jo'natish</h2>
+            <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy E'lon va Rasm Joylash</h2>
             <textarea id="announcement-text" rows="3" placeholder="E'lon matnini kiriting..."></textarea>
-            <input type="text" id="announcement-image" placeholder="Rasm havolasi (URL) — Ixtiyoriy...">
-            <button class="btn-action" onclick="postAnnouncement()"><i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish</button>
+            
+            <label class="file-label"><i class="fa-solid fa-image"></i> Kompyuterdan rasm tanlang (ixtiyoriy):</label>
+            <input type="file" id="announcement-file" accept="image/*">
+
+            <button class="btn-action" id="post-btn" onclick="postAnnouncement()"><i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish</button>
         </div>
 
         <!-- Yuborilgan E'lonlarni O'chirish -->
@@ -202,20 +211,47 @@
 
     async function postAnnouncement() {
         const text = document.getElementById('announcement-text').value;
-        const imageUrl = document.getElementById('announcement-image').value;
+        const fileInput = document.getElementById('announcement-file');
+        const file = fileInput.files[0];
+        const postBtn = document.getElementById('post-btn');
 
-        if (!text) return alert("Matn kiriting!");
+        if (!text) return alert("E'lon matnini kiriting!");
 
+        let imageUrl = null;
+
+        // Agar rasm tanlangan bo'lsa, uni Supabase Storage'ga yuklaymiz
+        if (file) {
+            postBtn.innerText = "Rasm yuklanmoqda...";
+            postBtn.disabled = true;
+
+            const fileName = Date.now() + '_' + file.name;
+            const { data, error } = await db.storage.from('images').upload(fileName, file);
+
+            if (error) {
+                alert("Rasm yuklashda xatolik yuz berdi: " + error.message);
+                postBtn.innerText = "E'lonni Chop Etish";
+                postBtn.disabled = false;
+                return;
+            }
+
+            // Yuklangan rasmni to'g'ridan-to'g'ri URL linkini olamiz
+            const { data: publicUrlData } = db.storage.from('images').getPublicUrl(fileName);
+            imageUrl = publicUrlData.publicUrl;
+        }
+
+        // Database'ga yozish
         await db.from('news').insert([{ 
             author_name: "Admin", 
             content: text, 
-            image_url: imageUrl || null,
+            image_url: imageUrl,
             is_admin: true 
         }]);
 
-        alert("E'lon chop etildi!");
+        alert("E'lon va rasm muvaffaqiyatli chop etildi!");
         document.getElementById('announcement-text').value = '';
-        document.getElementById('announcement-image').value = '';
+        fileInput.value = '';
+        postBtn.innerText = "E'lonni Chop Etish";
+        postBtn.disabled = false;
         loadNewsForAdmin();
     }
 
