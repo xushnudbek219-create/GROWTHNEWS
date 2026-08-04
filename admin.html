@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | Growth Community</title>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Ikonkalari -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -18,7 +15,6 @@
             --glass-border: rgba(255, 255, 255, 0.12);
             --accent-color: #6366f1;
             --accent-glow: rgba(99, 102, 241, 0.4);
-            --neon-green: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
@@ -34,7 +30,7 @@
             justify-content: center;
         }
 
-        .container { width: 100%; max-width: 850px; }
+        .container { width: 100%; max-width: 900px; }
 
         .card {
             background: var(--glass-bg);
@@ -80,23 +76,41 @@
 
         .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
 
-        .btn-add {
-            background: #10b981;
+        .btn-add, .btn-minus, .btn-delete {
             color: white;
             border: none;
-            padding: 8px 14px;
+            padding: 6px 10px;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
+            margin-right: 2px;
         }
 
+        .btn-add { background: #10b981; }
         .btn-add:hover { background: #059669; }
+
+        .btn-minus { background: #ef4444; }
+        .btn-minus:hover { background: #dc2626; }
+
+        .btn-delete { background: #dc2626; padding: 8px 12px; }
+        .btn-delete:hover { background: #991b1b; }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
         th { color: var(--text-muted); font-weight: 600; text-align: left; padding: 10px 15px; }
-        td { background: rgba(255, 255, 255, 0.03); padding: 14px 15px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+        td { background: rgba(255, 255, 255, 0.03); padding: 12px 15px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
         td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
         td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
+
+        .news-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -111,12 +125,22 @@
 
     <!-- Admin Boshqaruv paneli -->
     <div id="admin-dashboard" style="display:none;">
+        
+        <!-- Rasmli E'lon Jo'natish -->
         <div class="card">
             <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy E'lon Jo'natish</h2>
-            <textarea id="announcement-text" rows="3" placeholder="Bosh sahifada ko'rinadigan e'lon matnini kiriting..."></textarea>
+            <textarea id="announcement-text" rows="3" placeholder="E'lon matnini kiriting..."></textarea>
+            <input type="text" id="announcement-image" placeholder="Rasm havolasi (URL) — Ixtiyoriy...">
             <button class="btn-action" onclick="postAnnouncement()"><i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish</button>
         </div>
 
+        <!-- Barcha E'lonlarni Boshqarish va O'chirish -->
+        <div class="card">
+            <h2><i class="fa-solid fa-trash-can" style="color: #ef4444;"></i> Yuborilgan E'lonlar va Ularni O'chirish</h2>
+            <div id="news-management-list">E'lonlar yuklanmoqda...</div>
+        </div>
+
+        <!-- O'quvchilar Ro'yxati -->
         <div class="card">
             <h2><i class="fa-solid fa-users" style="color: #38bdf8;"></i> O'quvchilar Ro'yxati va Ball Boshqaruvi</h2>
             <table>
@@ -125,17 +149,18 @@
                         <th>Ism</th>
                         <th>Maxsus Kod</th>
                         <th>Joriy Ball</th>
-                        <th>Amal</th>
+                        <th>Ball Berish / Ayirish</th>
                     </tr>
                 </thead>
                 <tbody id="student-list"></tbody>
             </table>
         </div>
+
     </div>
 </div>
 
 <script>
-    const ADMIN_PASSWORD = "12345"; // Admin paroli
+    const ADMIN_PASSWORD = "12345";
 
     const SUPABASE_URL = "https://hdgikkxjnfxzzpiqujvl.supabase.co";
     const SUPABASE_KEY = "sb_publishable_iSEwPuZi560nIxxvcjdPDA_rySiE4q0";
@@ -149,6 +174,7 @@
             document.getElementById('login-box').style.display = 'none';
             document.getElementById('admin-dashboard').style.display = 'block';
             loadStudents();
+            loadNewsForAdmin();
         } else {
             alert("Noto'g'ri parol!");
         }
@@ -163,10 +189,12 @@
                     <tr>
                         <td><strong>${s.name}</strong></td>
                         <td><span style="color: #fbbf24; font-family: monospace; font-size: 1.1rem;">${s.code}</span></td>
-                        <td><strong style="color: #10b981;">${s.points}</strong> ball</td>
+                        <td><strong style="color: #10b981; font-size: 1.1rem;">${s.points}</strong> ball</td>
                         <td>
-                            <button class="btn-add" onclick="addPoints(${s.id}, ${s.points}, 5)">+5 Ball</button>
-                            <button class="btn-add" style="background: #3b82f6;" onclick="addPoints(${s.id}, ${s.points}, 10)">+10 Ball</button>
+                            <button class="btn-add" onclick="updatePoints(${s.id}, ${s.points}, 5)">+5</button>
+                            <button class="btn-add" style="background: #3b82f6;" onclick="updatePoints(${s.id}, ${s.points}, 10)">+10</button>
+                            <button class="btn-minus" onclick="updatePoints(${s.id}, ${s.points}, -5)">-5</button>
+                            <button class="btn-minus" style="background: #b91c1c;" onclick="updatePoints(${s.id}, ${s.points}, -10)">-10</button>
                         </td>
                     </tr>
                 `;
@@ -175,19 +203,57 @@
         }
     }
 
-    async function addPoints(id, currentPoints, pointsToAdd) {
-        const newPoints = currentPoints + pointsToAdd;
+    async function updatePoints(id, currentPoints, pointsChange) {
+        let newPoints = currentPoints + pointsChange;
+        if (newPoints < 0) newPoints = 0;
+
         await db.from('students').update({ points: newPoints }).eq('id', id);
         loadStudents();
     }
 
     async function postAnnouncement() {
         const text = document.getElementById('announcement-text').value;
+        const imageUrl = document.getElementById('announcement-image').value;
+
         if (!text) return alert("Matn kiriting!");
 
-        await db.from('news').insert([{ author_name: "Admin", content: text, is_admin: true }]);
+        await db.from('news').insert([{ 
+            author_name: "Admin", 
+            content: text, 
+            image_url: imageUrl || null,
+            is_admin: true 
+        }]);
+
         alert("E'lon muvaffaqiyatli joylandi!");
         document.getElementById('announcement-text').value = '';
+        document.getElementById('announcement-image').value = '';
+        loadNewsForAdmin();
+    }
+
+    async function loadNewsForAdmin() {
+        const { data } = await db.from('news').select('*').order('id', { ascending: false });
+        if (data) {
+            let html = '';
+            data.forEach(n => {
+                html += `
+                    <div class="news-item">
+                        <div>
+                            <strong>${n.author_name}:</strong> ${n.content.substring(0, 50)}...
+                            ${n.image_url ? '<i class="fa-solid fa-image" style="color:#38bdf8; margin-left: 10px;"></i>' : ''}
+                        </div>
+                        <button class="btn-delete" onclick="deleteNews(${n.id})"><i class="fa-solid fa-trash"></i> O'chirish</button>
+                    </div>
+                `;
+            });
+            document.getElementById('news-management-list').innerHTML = html || "Hozircha e'lonlar yo'q.";
+        }
+    }
+
+    async function deleteNews(id) {
+        if (confirm("Ushbu e'lonni o'chirishni tasdiqlaysizmi?")) {
+            await db.from('news').delete().eq('id', id);
+            loadNewsForAdmin();
+        }
     }
 </script>
 
