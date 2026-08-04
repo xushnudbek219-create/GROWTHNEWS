@@ -106,12 +106,14 @@
 <body>
 
 <div class="container">
+    <!-- Admin Parol Bilan Kirish -->
     <div id="login-box" class="card" style="max-width: 450px; margin: 50px auto;">
         <h2><i class="fa-solid fa-lock" style="color: #6366f1;"></i> Admin Kirish</h2>
         <input type="password" id="admin-pass" placeholder="Admin parolini kiriting...">
         <button class="btn-action" onclick="checkPassword()"><i class="fa-solid fa-right-to-bracket"></i> Kirish</button>
     </div>
 
+    <!-- Admin Boshqaruv Paneli -->
     <div id="admin-dashboard" style="display:none;">
         
         <!-- Rasmiy E'lon Jo'natish -->
@@ -131,7 +133,7 @@
             <div id="news-management-list">E'lonlar yuklanmoqda...</div>
         </div>
 
-        <!-- O'quvchilarni Boshqarish va Chiqarib Yuborish (O'chirish) -->
+        <!-- O'quvchilarni Boshqarish va Chiqarib Yuborish -->
         <div class="card">
             <h2><i class="fa-solid fa-users-gear" style="color: #38bdf8;"></i> O'quvchilarni Boshqarish</h2>
             <table>
@@ -210,7 +212,7 @@
     }
 
     async function postAnnouncement() {
-        const text = document.getElementById('announcement-text').value;
+        const text = document.getElementById('announcement-text').value.trim();
         const fileInput = document.getElementById('announcement-file');
         const file = fileInput.files[0];
         const postBtn = document.getElementById('post-btn');
@@ -219,13 +221,16 @@
 
         let imageUrl = null;
 
-        // Agar rasm tanlangan bo'lsa, uni Supabase Storage'ga yuklaymiz
+        // Agar rasm tanlangan bo'lsa
         if (file) {
             postBtn.innerText = "Rasm yuklanmoqda...";
             postBtn.disabled = true;
 
-            const fileName = Date.now() + '_' + file.name;
-            const { data, error } = await db.storage.from('images').upload(fileName, file);
+            const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+            const fileName = `${Date.now()}_${cleanFileName}`;
+
+            // Supabase Storage'dagi IMAGE nomli papkaga yuklash
+            const { data, error } = await db.storage.from('IMAGE').upload(fileName, file);
 
             if (error) {
                 alert("Rasm yuklashda xatolik yuz berdi: " + error.message);
@@ -234,22 +239,27 @@
                 return;
             }
 
-            // Yuklangan rasmni to'g'ridan-to'g'ri URL linkini olamiz
-            const { data: publicUrlData } = db.storage.from('images').getPublicUrl(fileName);
+            // Public URL/Link olish
+            const { data: publicUrlData } = db.storage.from('IMAGE').getPublicUrl(fileName);
             imageUrl = publicUrlData.publicUrl;
         }
 
-        // Database'ga yozish
-        await db.from('news').insert([{ 
+        // Database (news) ga saqlash
+        const { error: dbError } = await db.from('news').insert([{ 
             author_name: "Admin", 
             content: text, 
             image_url: imageUrl,
             is_admin: true 
         }]);
 
-        alert("E'lon va rasm muvaffaqiyatli chop etildi!");
-        document.getElementById('announcement-text').value = '';
-        fileInput.value = '';
+        if (dbError) {
+            alert("E'lonni saqlashda xatolik yuz berdi: " + dbError.message);
+        } else {
+            alert("E'lon va rasm muvaffaqiyatli chop etildi!");
+            document.getElementById('announcement-text').value = '';
+            fileInput.value = '';
+        }
+
         postBtn.innerText = "E'lonni Chop Etish";
         postBtn.disabled = false;
         loadNewsForAdmin();
@@ -262,7 +272,7 @@
             data.forEach(n => {
                 html += `
                     <div class="news-item">
-                        <div><strong>${n.author_name}:</strong> ${n.content.substring(0, 40)}...</div>
+                        <div><strong>${n.author_name || 'Admin'}:</strong> ${n.content.substring(0, 40)}...</div>
                         <button class="btn-delete" onclick="deleteNews(${n.id})"><i class="fa-solid fa-trash"></i> O'chirish</button>
                     </div>
                 `;
