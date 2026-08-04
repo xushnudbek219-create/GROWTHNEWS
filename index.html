@@ -36,7 +36,6 @@
         .header h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(90deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .header p { color: var(--text-muted); margin-top: 5px; }
 
-        /* Tepadagi Navigatsiya Menyusi */
         .main-nav {
             display: flex;
             background: var(--glass-bg);
@@ -162,7 +161,7 @@
         <button class="nav-btn" id="nav-profile" onclick="showPage('profile')"><i class="fa-solid fa-user"></i> Profil</button>
     </div>
 
-    <!-- 1. BOSH SAHIFA (Faqat Admin e'lonlari va rasmlari) -->
+    <!-- 1. BOSH SAHIFA -->
     <div id="page-home">
         <div class="card">
             <h2><i class="fa-solid fa-bullhorn" style="color: #c084fc;"></i> Rasmiy Xabarlar va Postlar</h2>
@@ -170,7 +169,7 @@
         </div>
     </div>
 
-    <!-- 2. LEADERBOARD SAHIFASI (Alohida Reyting Bo'limi) -->
+    <!-- 2. LEADERBOARD SAHIFASI -->
     <div id="page-leaderboard" style="display: none;">
         <div class="card">
             <h2><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> O'quvchilar Reytingi (Leaderboard)</h2>
@@ -199,7 +198,6 @@
     <!-- 4. PROFIL SAHIFASI -->
     <div id="page-profile" style="display: none;">
         
-        <!-- Tizimga kirish va Ro'yxatdan o'tish formasi -->
         <div class="card" id="auth-card">
             <div class="sub-tab-buttons">
                 <button class="sub-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">Tizimga Kirish</button>
